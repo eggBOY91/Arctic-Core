@@ -52,9 +52,9 @@ class SpeedCheatDetector;
 #define PLAYER_ACTION_BUTTON_SIZE PLAYER_ACTION_BUTTON_COUNT * sizeof(uint32)
 
 #define MAX_SPEC_COUNT 2
-#define GLYPHS_COUNT 9 // 6 in 3.3.5a, isn't it 9 in cata? 
+#define GLYPHS_COUNT 9 // 6 in 3.3.5a, isn't it 9 in cata? how many in 6.x?
 
-#define PLAYER_LEVEL_CAP                85
+#define PLAYER_LEVEL_CAP        100
 #define PLAYER_ARENA_MIN_LEVEL  70
 
 #define PLAYER_EXPLORED_ZONES_LENGTH 128
@@ -63,6 +63,7 @@ class SpeedCheatDetector;
 #endif
 #define LOGIN_CIENT_SEND_DELAY 1000 //we have this delay of sending auras to other players so client will have time to create object first
 
+//!!! todo: update to 6.x (add neutral for pandaren)
 enum PlayerTeams{
 	TEAM_ALLIANCE = 0,
 	TEAM_HORDE    = 1,
@@ -75,6 +76,7 @@ enum PlayerTeams{
 //  a character's inventory
 //====================================================================
 
+//!!! todo: update to 6.x
 enum Classes
 {
     WARRIOR =     1,
@@ -90,6 +92,7 @@ enum Classes
 	MAX_PLAYER_CLASSES
 };
 
+//!!! todo: update to 6.x
 enum Races
 {
     RACE_HUMAN =    1,
@@ -112,6 +115,7 @@ enum PlayerStatus
     TRANSFER_PENDING = 1,
 };
 
+//!!! todo: update to 6.x
 enum RankTitles
 {
     PVPTITLE_NONE							= 0,
@@ -579,7 +583,7 @@ struct PlayerPet
 	char stablestate;
 	uint32 number;
 	uint32 level;
-	uint32 happinessupdate;
+	uint32 happinessupdate; // happiness removed in 4.x
 	string actionbar;
 	time_t reset_time;
 	uint32 reset_cost;

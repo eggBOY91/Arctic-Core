@@ -26,37 +26,6 @@ uint64 MAKE_NEW_GUID(uint32 l, uint32 e, uint32 h)
     return uint64(uint64(l) | (uint64(e) << 32) | (uint64(h) << ((h == 0xF101 || h == 0xF102) ? 48 : 52)));
 }
 
-inline uint8 ObfuscateByte( uint8 x ) 
-{
-	return ( x^0x01 ); //!!obfuscating 0 might crash the client sometimes
-}
-
-inline void GUID_un_obfuscate( uint64 &guid )
-{
-	uint8 *guid_bytes = (uint8 *)&guid;
-	for( uint32 i=0;i<8;i++)
-		if( guid_bytes[i] )
-			guid_bytes[i] = ObfuscateByte( guid_bytes[i] );
-}
-
-inline void GUID_un_obfuscate( uint8 guid_bytes[8] )
-{
-	for( uint32 i=0;i<8;i++)
-		if( guid_bytes[i] )
-			guid_bytes[i] = ObfuscateByte( guid_bytes[i] );
-}
-
-inline void GUID_obfuscate( uint64 &guid )
-{
-	GUID_un_obfuscate( guid );
-}
-
-inline void GUID_obfuscate( uint8 guid_bytes[8] )
-{
-	for( uint32 i=0;i<8;i++)
-		guid_bytes[i] = ObfuscateByte( guid_bytes[i] );
-}
-
 LoginErrorCode VerifyName(const char* name, size_t nlen)
 {
 	const char* p;
@@ -177,9 +146,9 @@ WorldPacket data (SMSG_CHAR_ENUM, packetSize);
 
 ByteBuffer buffer;
 
-data.writeBits(0, 23);
-data.writeBit(1);
-data.writeBits(result ? result->GetRowCount() : 0, 17);
+data.WriteBits(0, 23);
+data.WriteBit(1);
+data.WriteBits(result ? result->GetRowCount() : 0, 17);
 
 
 if (result)
@@ -223,6 +192,7 @@ do
 
 	uint32 _GID = fields[18].GetUInt32(); // guildId // 4.3.4
     
+    //!!! very nasty code right here
             uint8 guidb[8];
 			*(uint64*)guidb = MAKE_NEW_GUID(_GID, 0, _GID ? uint32(0x1FF) : 0);
 
@@ -250,24 +220,24 @@ do
 
 
 			
-	data.writeBit(guid3);
-    data.writeBit(guidb1);
-    data.writeBit(guidb7);
-    data.writeBit(guidb2);
-    data.writeBits(uint32(name.length()), 7);
-    data.writeBit(guid4);
-    data.writeBit(guid7);
-    data.writeBit(guidb3);
-    data.writeBit(guid5);
-    data.writeBit(guidb6);
-    data.writeBit(guid1);
-    data.writeBit(guidb5);
-    data.writeBit(guidb4);
-    data.writeBit(fields[15].GetUInt32() & 0x20); // atLoginFlags & 0x20 = AT_LOGIN_FIRST (trinitycore) // not 4.3.4, what to do?
-    data.writeBit(guid0);
-    data.writeBit(guid2);
-    data.writeBit(guid6);
-    data.writeBit(guidb0);
+	data.WriteBit(guid3);
+    data.WriteBit(guidb1);
+    data.WriteBit(guidb7);
+    data.WriteBit(guidb2);
+    data.WriteBits(uint32(name.length()), 7);
+    data.WriteBit(guid4);
+    data.WriteBit(guid7);
+    data.WriteBit(guidb3);
+    data.WriteBit(guid5);
+    data.WriteBit(guidb6);
+    data.WriteBit(guid1);
+    data.WriteBit(guidb5);
+    data.WriteBit(guidb4);
+    data.WriteBit(fields[15].GetUInt32() & 0x20); // atLoginFlags & 0x20 = AT_LOGIN_FIRST (trinitycore) // not 4.3.4, what to do?
+    data.WriteBit(guid0);
+    data.WriteBit(guid2);
+    data.WriteBit(guid6);
+    data.WriteBit(guidb0);
 			
     
     if(_side < 0)
@@ -452,7 +422,7 @@ do
 
 } // end if
 
-data.flushBits();
+data.FlushBits();
 data.append(buffer);
 
 SendPacket(&data);
@@ -985,14 +955,14 @@ void WorldSession::HandlePlayerLoginOpcode(WorldPacket & recv_data)
 	// 15595
 	uint8 playerGuid[8];
 	
-	playerGuid[2] = recv_data.readBit();
-    playerGuid[3] = recv_data.readBit();
-    playerGuid[0] = recv_data.readBit();
-    playerGuid[6] = recv_data.readBit();
-    playerGuid[4] = recv_data.readBit();
-    playerGuid[5] = recv_data.readBit();
-    playerGuid[1] = recv_data.readBit();
-    playerGuid[7] = recv_data.readBit();
+	playerGuid[2] = recv_data.ReadBit();
+    playerGuid[3] = recv_data.ReadBit();
+    playerGuid[0] = recv_data.ReadBit();
+    playerGuid[6] = recv_data.ReadBit();
+    playerGuid[4] = recv_data.ReadBit();
+    playerGuid[5] = recv_data.ReadBit();
+    playerGuid[1] = recv_data.ReadBit();
+    playerGuid[7] = recv_data.ReadBit();
 
     recv_data.ReadByteSeq(playerGuid[2]);
     recv_data.ReadByteSeq(playerGuid[7]);
@@ -1184,13 +1154,6 @@ void WorldSession::FullLogin(Player* plr)
 	data << VZ;
 	data << VO;
 	SendPacket(&data);
-
-	//printf("SMSG_LOGIN_VERIFY_WORLD\n");
-
-	//StackWorldPacket<20> datab(SMSG_FEATURE_SYSTEM_STATUS);
-
-
-	//datab.Initialize(SMSG_FEATURE_SYSTEM_STATUS);
 	
 	WorldPacket datax(SMSG_FEATURE_SYSTEM_STATUS, 7); // 4.3.4
 
@@ -1199,13 +1162,13 @@ void WorldSession::FullLogin(Player* plr)
     datax << uint32(1);
     datax << uint32(2);
     datax << uint32(0);
-    datax.writeBit(true);
-    datax.writeBit(true);
-    datax.writeBit(false);
-    datax.writeBit(true);
-    datax.writeBit(false);
-    datax.writeBit(false);                                   // enable(1)/disable(0) voice chat interface in client
-	datax.flushBits();
+    datax.WriteBit(true);
+    datax.WriteBit(true);
+    datax.WriteBit(false);
+    datax.WriteBit(true);
+    datax.WriteBit(false);
+    datax.WriteBit(false);                                   // enable(1)/disable(0) voice chat interface in client
+	datax.FlushBits();
     datax << uint32(1);
     datax << uint32(0);
     datax << uint32(10);
@@ -1329,14 +1292,14 @@ void WorldSession::FullLogin(Player* plr)
 	// Login time, will be used for played time calc
 	plr->m_playedtime[2] = uint32(UNIXTIME);
 
-	// disabled
+	// disabled - structure not updated
 	//Issue a message telling all guild members that this player has signed on
 	/*if(plr->IsInGuild())
 	{
 		Guild* pGuild = plr->m_playerInfo->guild;
 		if(pGuild)
 		{
-			WorldPacket data(SMSG_GUILD_EVENT, 50); // do we need that much? // shoud work on 4.3.4
+			WorldPacket data(SMSG_GUILD_EVENT, 50);
 
 			data << uint8(GUILD_EVENT_MOTD);
 			data << uint8(1);
@@ -1352,12 +1315,11 @@ void WorldSession::FullLogin(Player* plr)
 		}
 	}*/
 
-	// !!!! UNCOMMENT THESE ONCE THEY WORK PROPERLY !!!!
-    // don't send this, it's a sandbox, they're not updated
+	//!!! UNCOMMENT THESE ONCE THEY WORK PROPERLY !!!!
 	// Send online status to people having this char in friendlist
-	//_player->Social_TellFriendsOnline(); // this should work on 4.3.4
+	_player->Social_TellFriendsOnline(); // this should work on 4.3.4
 	// send friend list (for ignores)
-	//_player->Social_SendFriendList(7); // this should work on 4.3.4
+	_player->Social_SendFriendList(7); // this should work on 4.3.4
 
 	plr->SendDungeonDifficulty(); // 15595
 	plr->SendRaidDifficulty();    // 15595
@@ -1497,5 +1459,5 @@ void WorldSession::HandleLoadScreenOpcode(WorldPacket & recv_data)
 	uint32 mapId;
 
 	recv_data >> mapId;
-	recv_data.readBit();
+	recv_data.ReadBit();
 }

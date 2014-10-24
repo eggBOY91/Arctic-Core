@@ -1,5 +1,9 @@
-Authentication - DONE
-Char enum      - DONE
-Char create    - DONE
-Char delete    - DONE
-Login world
+Arctic-Core pre-alpha objectives for 6.x:
+__________________________________________
+
+Update DBC structures
+Update guids (they're 128 bits now!)
+Update authentication packets
+Update char enum/create/delete packets and other packets
+Update SMSG_UPDATE_OBJECT and other required packets to get in-game
+__________________________________________

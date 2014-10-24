@@ -1,9 +1,4 @@
-arcemu
-======
-
-ArcEmu Git Project
-
-This is an unofficial ArcEmu branch developed individually by Ijustwantedtosayhi.
+Arctic-Core
 ======
 
 REMINDERS: (todo)

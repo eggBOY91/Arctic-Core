@@ -20,7 +20,11 @@
 // Class WorldSocket - Main network code functions, handles
 // reading/writing of all packets.
 
-//!!! todo: cleanup in packets, remove useless comments
+/*
+    ToDo: *Packet cleanup for 6.x
+          *Remove useless/debugging comments
+          *Update authentication packets to 6.x
+*/
 
 #include "StdAfx.h"
 #include "AuthCodes.h"
@@ -213,7 +217,6 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint32 opcode, size_t len, const void* 
 	// Packet logger :)
 	sWorldLog.LogPacket((uint32)len, opcode, (const uint8*)data, 1, (mSession ? mSession->GetAccountId() : 0));
 
-	    //printf("Sent opcode: %d\n", opcode);
 		ServerPktHeader Header(uint32(len + 2), opcode);
 	    _crypt.EncryptSend(((uint8*)Header.header), Header.getHeaderLength());
 
@@ -236,40 +239,34 @@ void WorldSocket::OnConnect()
 	sWorld.mAcceptedConnections++;
 	_latency = getMSTime();
 
-	//printf("OnConnect is executing.......\n");
-
+    // 4.3.4 15595
 	WorldPacket packet(MSG_WOW_CONNECTION, 46);
     packet << "RLD OF WARCRAFT CONNECTION - SERVER TO CLIENT";
 	SendPacket(&packet);
-	
-	//printf("Server to client\n");
-
-	//printf("OnConnect has executed!\n");
 }
 
 void WorldSocket::OnConnectTwo()
 {
 	WorldPacket packet(SMSG_AUTH_CHALLENGE, 37);
+	// 4.3.4 15595
 
-	//mangos 4.3.4?
-	// No encryption seeds here?
-
+    // cmangos
 	for (uint32 i = 0; i < 8; i++)
         packet << uint32(0);
 
 	packet << mSeed;
 	packet << uint8(1);
 
-	//printf("OnConnectTwo has executed\n");
     SendPacket(&packet);
 }
 
 void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 {
-	//printf("Handle auth session started executing...");
     uint32 addonSize;
 	std::string account;
 	_latency = getMSTime() - _latency;
+
+    // 4.3.4 15595
 
 	try
 	{
@@ -288,7 +285,6 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
     *recvPacket >> AuthDigest[7];
     *recvPacket >> AuthDigest[16];
     *recvPacket >> AuthDigest[3];
-    //*recvPacket >> mClientBuild;
 	mClientBuild = recvPacket->read<uint16>();
     *recvPacket >> AuthDigest[8];
     recvPacket->read<uint32>();
@@ -304,25 +300,23 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
     *recvPacket >> AuthDigest[14];
     *recvPacket >> AuthDigest[13];
 
-
-        //size_t pos = recvPacket->rpos(); // so what the fuck
+    //size_t pos = recvPacket->rpos(); // so what the fuck
 
      *recvPacket >> addonSize;
 
+     //!!! We need to fix the addon packet before. Until then we're just going to skip these...
 	 recvPacket->read_skip(addonSize); // skip this
      
 	 /*for(uint32 i = 0; i < addonSize; i++)
          recvPacket->read<uint8>();*/
 
-		recvPacket->readBit();
-		uint32 accountNameLength = recvPacket->readBits(12);
+		recvPacket->ReadBit();
+		uint32 accountNameLength = recvPacket->ReadBits(12);
 		account = recvPacket->ReadString(accountNameLength);
-
-		//printf("DONE! -- Got account name: %s\n", account.c_str());
 	}
 	catch(ByteBuffer::error &)
 	{
-		LOG_DETAIL("Incomplete copy of AUTH_SESSION Received.");
+		LOG_DETAIL("Incomplete copy of AUTH_SESSION received.");
 		return;
 	}
 
@@ -344,8 +338,6 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 
 void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)
 {
-    //printf("InformationRetreiveCallback is getting executed!!\n");
-
 	if(requestid != mRequestID)
 		return;
 
@@ -354,9 +346,6 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 
 	if(error != 0 || pAuthenticationPacket == NULL)
 	{
-	    printf("Something happened wrong @ the logon server\n");
-		// something happened wrong @ the logon server
-		//OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0D");
 		SendAuthResponseError(0x0D);
 		return;
 	}
@@ -370,14 +359,13 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	string lang = "enUS";
 	uint32 i;
 
-	//printf("Extracting needed information......\n");
-
 	recvData >> AccountID >> AccountName >> GMFlags >> AccountFlags;
 	ForcedPermissions = sLogonCommHandler.GetForcedPermissions(AccountName);
 	if(ForcedPermissions != NULL)
 		GMFlags.assign(ForcedPermissions->c_str());
-		
-		//printf("Got information packet from logon:: %s ID %u (request %u)\n", AccountName.c_str(), AccountID, mRequestID);
+	
+    //!!! Comment this when we're done debugging
+	printf("Got information packet from logon:: %s ID %u (request %u)\n", AccountName.c_str(), AccountID, mRequestID);
 
 	LOG_DEBUG(" >> got information packet from logon: `%s` ID %u (request %u)", AccountName.c_str(), AccountID, mRequestID);
 
@@ -387,9 +375,6 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	uint8 K[40];
 	recvData.read(K, 40);
 	_crypt.Init(K);
-
-	BigNumber BNK;
-	BNK.SetBinary(K, 40);
 
 	//checking if player is already connected
 	//disconnect current player and login this one(blizzlike)
@@ -409,9 +394,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 		// we must send authentication failed here.
 		// the stupid newb can relog his client.
 		// otherwise accounts dupe up and disasters happen.
-		//OutPacket(SMSG_AUTH_RESPONSE, 1, "\x15");
-		//printf("Auth failed\n");
-	    SendAuthResponseError(0x15); // auth failed
+	    SendAuthResponseError(0x15); // AUTH_FAILED
 		return;
 	}
 
@@ -437,14 +420,9 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 
 	if(memcmp(sha.GetDigest(), AuthDigest, 20))
 	{
-		// AUTH_UNKNOWN_ACCOUNT = 21
-		//OutPacket(SMSG_AUTH_RESPONSE, 1, "\x15");
-		printf("auth_unknown_account\n");
 		SendAuthResponseError(0x15); // AUTH_UNKNOWN_ACCOUNT
 		return;
 	}
-	
-	//printf("Allocating session........\n");
 
 	// Allocate session
 	WorldSession* pSession = new WorldSession(AccountID, AccountName, this);
@@ -462,8 +440,6 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 
 	//if(recvData.rpos() != recvData.wpos())
 		//recvData >> pSession->m_muted;
-		
-		//printf("Session properties set!\n");
 
 	for(i = 0; i < 8; ++i)
 		pSession->SetAccountData(i, NULL, true, 0);
@@ -493,13 +469,12 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 			delete pResult;
 		}
 	}
-	//printf("Auth %s from %s:%u [%ums]\n", AccountName.c_str(), GetRemoteIP().c_str(), GetRemotePort(), _latency);
+
 	Log.Debug("Auth", "%s from %s:%u [%ums]", AccountName.c_str(), GetRemoteIP().c_str(), GetRemotePort(), _latency);
 	
 #ifdef SESSION_CAP
 	if(sWorld.GetSessionCount() >= SESSION_CAP)
 	{
-		//OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0D");
 		SendAuthResponseError(0x0D);
 		Disconnect();
 		return;
@@ -510,7 +485,6 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	uint32 playerLimit = sWorld.GetPlayerLimit();
 	if((sWorld.GetSessionCount() < playerLimit) || pSession->HasGMPermissions())
 	{
-		//printf("You're gonna get authed!!\n");
 		Authenticate();
 	}
 	else if(playerLimit > 0)
@@ -525,8 +499,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	}
 	else
 	{
-		SendAuthResponseError(0x0E);
-		//OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0E"); // AUTH_REJECT = 14
+		SendAuthResponseError(0x0E); // AUTH_REJECT
 		Disconnect();
 	}
 
@@ -537,34 +510,39 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 
 void WorldSocket::Authenticate()
 {
-	//printf("We're authenticating baby!\n");
 	ARCEMU_ASSERT(pAuthenticationPacket != NULL);
 	mQueued = false;
 
 	if(mSession == NULL)
 		return;
 
+    // 4.3.4 15595 - todo: update to 6.x
 	WorldPacket data(SMSG_AUTH_RESPONSE, 17); // 17 + 4 if in queue
 
-	data.writeBit(false);
-	data.writeBit(true);
+    uint32 realmCount = Config.RealmConfig.GetIntDefault("LogonServer", "RealmCount", 1); // needed in 6.x, along with other realm stuff
 
-	data << uint32(0);                                   // BillingTimeRemaining
-    data << uint8(3);                          // 0 - normal, 1 - TBC, 2 - WOTLK, 3 - CATA; must be set in database manually for each account
+	data.WriteBit(false);
+	data.WriteBit(true);
+
+	data << uint32(0);                          // BillingTimeRemaining
+    data << uint8(3);                          // 0 - vanilla, 1 - TBC, 2 - WOTLK, 3 - CATA; must be set in database manually for each account
     data << uint32(0);
     data << uint8(3);                          // Unknown, these two show the same
-    data << uint32(0);                                   // BillingTimeRested
-    data << uint8(0);                                    // BillingPlanFlags
+    data << uint32(0);                         // BillingTimeRested
+    data << uint8(0);                          // BillingPlanFlags
 
     data << uint8(0x0C); // 0x0C = 12 (AUTH_OK)
 
 	SendPacket(&data);
 
+    // 15595
 	WorldPacket cdata(SMSG_CLIENTCACHE_VERSION, 4);
     cdata << uint32(15595);
     SendPacket(&cdata);
-
+    
+    //!!! Uncomment this once it's fixed
 	//sAddonMgr.SendAddonInfoPacket(pAuthenticationPacket, static_cast< uint32 >(pAuthenticationPacket->rpos()), mSession);
+
 	mSession->_latency = _latency;
 
 	delete pAuthenticationPacket;
@@ -579,12 +557,12 @@ void WorldSocket::Authenticate()
 
 void WorldSocket::UpdateQueuePosition(uint32 Position)
 {
-	//printf("UpdateQueuePosition gets executed!!\n");
+    // 4.3.4 15595 - todo: update this to 6.x
 	WorldPacket QueuePacket(SMSG_AUTH_RESPONSE, 21); // 17 + 4 if queued
 
-	QueuePacket.writeBit(true);                                  // has queue
-    QueuePacket.writeBit(false);                                 // unk queue-related
-    QueuePacket.writeBit(true);                                  // has account data
+	QueuePacket.WriteBit(true);                                  // has queue
+    QueuePacket.WriteBit(false);                                 // unk queue-related
+    QueuePacket.WriteBit(true);                                  // has account data
 
     QueuePacket << uint32(0);                                    // Unknown - 4.3.2
     QueuePacket << uint8(3);                     // 0 - normal, 1 - TBC, 2 - WotLK, 3 - CT. must be set in database manually for each account
@@ -610,6 +588,7 @@ void WorldSocket::_HandlePing(WorldPacket* recvPacket)
 		return;
 	}
 
+    // 4.3.4 15595
 	*recvPacket >> _latency;
 	*recvPacket >> ping;
 
@@ -708,7 +687,6 @@ void WorldSocket::OnRead()
 				break;
 			case MSG_WOW_CONNECTION:
 				{
-					//printf("Client to server\n");
 					HandleWoWConnection(Packet);      // new 4.x
 				}
 				break;
@@ -736,12 +714,13 @@ void WorldSocket::HandleWoWConnection(WorldPacket* recvPacket)
 		OnConnectTwo();
 }
 
-void WorldSocket::SendAuthResponseError(uint8 code)
+void WorldSocket::SendAuthResponseError(uint8 code) // 4.3.4 15595
 {
 	WorldPacket packet(SMSG_AUTH_RESPONSE, 1);
-	packet.writeBit(0);      // has queue info
-	packet.writeBit(0);      // has account info
-	packet << uint8(code);   // the error code
+
+	packet.WriteBit(false);      // has queue info
+	packet.WriteBit(false);      // has account info
+	packet << uint8(code);       // the error code
 	
 	SendPacket(&packet);
 }
