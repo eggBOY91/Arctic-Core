@@ -69,6 +69,14 @@ struct SummonPropertiesEntry
 	uint32 Flags;
 };
 
+struct NameGenEntry
+{
+    uint32 id;
+    char*  Name;
+    uint32 race;
+    uint32 gender;
+};
+
 struct LFGDungeonEntry
 {
     uint32  ID;                                             // 0
@@ -2829,6 +2837,7 @@ extern SERVER_DECL DBCStorage<WMOAreaTableEntry>			dbcWMOAreaTable;
 
 extern SERVER_DECL DBCStorage<MailTemplateEntry>                        dbcMailTemplate;   
 extern SERVER_DECL DBCStorage<SummonPropertiesEntry>                  dbcSummonProperties;
+extern SERVER_DECL DBCStorage<NameGenEntry>                  dbcNameGen;
 
 bool LoadDBCs();
 

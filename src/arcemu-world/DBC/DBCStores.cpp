@@ -137,6 +137,7 @@ SERVER_DECL DBCStorage<WMOAreaTableEntry>			dbcWMOAreaTable;
 
 SERVER_DECL DBCStorage<MailTemplateEntry>                       dbcMailTemplate;
 SERVER_DECL DBCStorage<SummonPropertiesEntry>                   dbcSummonProperties;
+SERVER_DECL DBCStorage<NameGenEntry>                dbcNameGen;
 
 #ifdef ENABLE_ACHIEVEMENTS
 const char* AchievementCriteriaFormat="niiiiLiiisixiiixxxxxxxx";
@@ -165,6 +166,7 @@ const char* questrewrepformat = "ixiiiiiiiii";
 
 const char* mailTemplateEntryFormat = "uss";
 const char* summonpropertiesformat = "uuuuuu";
+const char* nameGenEntryFormat = "usuu";
 
 const char* WorldMapOverlayStoreFormat="nxiiiixxxxxxxxx";
 
@@ -475,6 +477,8 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/MailTemplate.dbc", mailTemplateEntryFormat, true, dbcMailTemplate, true);
 
 	LOAD_DBC("DBC/SummonProperties.dbc", summonpropertiesformat, true, dbcSummonProperties, false);
+
+    LOAD_DBC("DBC/NameGen.dbc", nameGenEntryFormat, true, dbcNameGen, true);
 
 	return true;
 }

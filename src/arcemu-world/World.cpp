@@ -530,12 +530,12 @@ bool World::SetInitialWorldSettings()
 	{
 		TalentEntry const* talent_info = dbcTalent.LookupRowForced(i);
 		// Don't add invalid talents or Hunter Pet talents (trees 409, 410 and 411) to the inspect table
-		//if(talent_info == NULL || talent_info->TalentTree == 409 || talent_info->TalentTree == 410 || talent_info->TalentTree == 411)
-		//	continue;
+		if(talent_info == NULL || talent_info->TalentTree == 409 || talent_info->TalentTree == 410 || talent_info->TalentTree == 411)
+			continue;
 
-		//TalentTabEntry const* tab_info = dbcTalentTab.LookupEntryForced(talent_info->TalentTree);
-		//if(tab_info == NULL)
-			//continue;
+		TalentTabEntry const* tab_info = dbcTalentTab.LookupEntryForced(talent_info->TalentTree);
+		if(tab_info == NULL)
+			continue;
 
 		talent_max_rank = 0;
 		for(uint32 j = 5; j > 0; --j)
@@ -548,7 +548,7 @@ bool World::SetInitialWorldSettings()
 		}
 
 		InspectTalentTabBit[(talent_info->Row << 24) + (talent_info->Col << 16) + talent_info->TalentID] = talent_max_rank;
-		//InspectTalentTabSize[talent_info->TalentTree] += talent_max_rank;
+		InspectTalentTabSize[talent_info->TalentTree] += talent_max_rank;
 	}
 
 	for(uint32 i = 0; i < dbcTalentTab.GetNumRows(); ++i)
@@ -576,8 +576,8 @@ bool World::SetInitialWorldSettings()
 			if(talent_info == NULL)
 				continue;
 
-			//if(talent_info->TalentTree != tab_info->TalentTabID)
-			//	continue;
+			if(talent_info->TalentTree != tab_info->TalentTabID)
+			    continue;
 
 			InspectTalentTabPos[talent_id] = talent_pos;
 			talent_pos += itr->second;
@@ -1509,16 +1509,16 @@ void World::Rehash(bool load)
 
 void World::LoadNameGenData()
 {
-	/*for(DBCStorage< NameGenEntry >::iterator itr = dbcNameGen.begin(); itr != dbcNameGen.end(); ++itr)
+	for(DBCStorage< NameGenEntry >::iterator itr = dbcNameGen.begin(); itr != dbcNameGen.end(); ++itr)
 	{
 		NameGenEntry* nge = *itr;
 
 		NameGenData d;
 
 		d.name = std::string(nge->Name);
-		d.type = nge->unk2;
+		d.type = nge->gender;
 		_namegendata[d.type].push_back(d);
-	}*/  // add this
+	}
 }
 
 void World::CharacterEnumProc(QueryResultVector & results, uint32 AccountId)

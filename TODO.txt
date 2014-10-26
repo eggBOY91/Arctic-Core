@@ -1,7 +1,7 @@
 Arctic-Core pre-alpha objectives for 6.x:
 __________________________________________
 
-Update DBC structures
+Update DBC structures (+ DBCStore files are a mess!)
 Update guids (they're 128 bits now!)
 Update authentication packets
 Update char enum/create/delete packets and other packets
