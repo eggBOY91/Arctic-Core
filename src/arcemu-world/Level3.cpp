@@ -940,7 +940,7 @@ bool ChatHandler::HandleNpcInfoCommand(const char* args, WorldSession* m_session
 		if((unitflags & UnitFlagToName[ i ].Flag) != 0)
 			SystemMessage(m_session, "%s", UnitFlagToName[ i ].Name);
 
-	uint32 dynflags = crt->GetUInt32Value(UNIT_DYNAMIC_FLAGS);
+	uint32 dynflags = crt->GetUInt32Value(OBJECT_DYNAMIC_FLAGS);
 	SystemMessage(m_session, "Unit dynamic flags: %u", dynflags);
 
 	for(uint32 i = 0; i < numdynflags; i++)
@@ -4194,8 +4194,8 @@ bool ChatHandler::HandleSetTitle(const char* args, WorldSession* m_session)
 	if(title == 0)
 	{
 		plr->SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES, 0);
-		plr->SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES1, 0);
-		plr->SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES2, 0);
+		plr->SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES, 0);
+		plr->SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES, 0);
 	}
 	else if(title > 0)
 		plr->SetKnownTitle(static_cast< RankTitles >(title), true);

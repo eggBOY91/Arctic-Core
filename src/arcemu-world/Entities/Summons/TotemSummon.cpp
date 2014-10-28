@@ -71,7 +71,7 @@ void TotemSummon::Load(CreatureProto* proto, Unit* owner, LocationVector & posit
 	SetDisplayId(displayID);
 	SetNativeDisplayId(creature_info->Male_DisplayID);
 	SetCastSpeedMod(1.0f);
-	SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+	SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 0);
 
 	InheritSMMods(owner);
 

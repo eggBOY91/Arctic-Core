@@ -1005,7 +1005,7 @@ void Group::UpdateAllOutOfRangePlayersFor(Player* pPlayer)
 					hisMask.Clear();
 					myMask.Clear();
 					u1 = u2 = false;
-					for(uint32 j = PLAYER_QUEST_LOG_1_1; j <= PLAYER_QUEST_LOG_25_5; ++j)
+					for(uint32 j = PLAYER_QUEST_LOG; j <= PLAYER_QUEST_LOG; ++j)
 					{
 						if(plr->GetUInt32Value(j))
 						{
@@ -1054,19 +1054,19 @@ void Group::HandleUpdateFieldChange(uint32 Index, Player* pPlayer)
 			Flags = GROUP_UPDATE_FLAG_MAXHEALTH;
 			break;
 
-		case UNIT_FIELD_POWER1:
-		case UNIT_FIELD_POWER2:
-		case UNIT_FIELD_POWER3:
-		case UNIT_FIELD_POWER4:
-		case UNIT_FIELD_POWER5: //runicpower in cata?
+		case UNIT_FIELD_POWER:
+		//case UNIT_FIELD_POWER:
+		//case UNIT_FIELD_POWER:
+		//case UNIT_FIELD_POWER:
+		//case UNIT_FIELD_POWER: //runicpower in cata?
 			Flags = GROUP_UPDATE_FLAG_POWER;
 			break;
 
-		case UNIT_FIELD_MAXPOWER1:
-		case UNIT_FIELD_MAXPOWER2:
-		case UNIT_FIELD_MAXPOWER3:
-		case UNIT_FIELD_MAXPOWER4:
-		case UNIT_FIELD_MAXPOWER5: //runicpower in cata?
+		case UNIT_FIELD_MAXPOWER:
+		//case UNIT_FIELD_MAXPOWER:
+		//case UNIT_FIELD_MAXPOWER:
+		//case UNIT_FIELD_MAXPOWER:
+		//case UNIT_FIELD_MAXPOWER: //runicpower in cata?
 			Flags = GROUP_UPDATE_FLAG_MAXPOWER;
 			break;
 
@@ -1189,12 +1189,12 @@ void Group::SendLootUpdates(Object* o)
 	// Build the actual update.
 	ByteBuffer buf(500);
 
-	uint32 Flags = o->GetUInt32Value(UNIT_DYNAMIC_FLAGS);
+	uint32 Flags = o->GetUInt32Value(OBJECT_DYNAMIC_FLAGS);
 
 	Flags |= U_DYN_FLAG_LOOTABLE;
 	Flags |= U_DYN_FLAG_TAPPED_BY_PLAYER;
 
-	o->BuildFieldUpdatePacket(&buf, UNIT_DYNAMIC_FLAGS, Flags);
+	o->BuildFieldUpdatePacket(&buf, OBJECT_DYNAMIC_FLAGS, Flags);
 
 	Lock();
 

@@ -1138,7 +1138,7 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 			return;
 		}
 
-		if(g_caster && g_caster->GetUInt32Value(OBJECT_FIELD_CREATED_BY) && g_caster->m_summoner)
+		if(g_caster && g_caster->GetUInt32Value(GAMEOBJECT_FIELD_CREATED_BY) && g_caster->m_summoner)
 			pAura = sSpellFactoryMgr.NewAura(GetProto(), Duration, g_caster->m_summoner, unitTarget, m_triggeredSpell, i_caster);
 		else
 			pAura = sSpellFactoryMgr.NewAura(GetProto(), Duration, m_caster, unitTarget, m_triggeredSpell, i_caster);
@@ -1176,9 +1176,9 @@ void Spell::SpellEffectPowerDrain(uint32 i)  // Power Drain
 	if(!unitTarget || !unitTarget->isAlive())
 		return;
 
-	uint32 powerField = UNIT_FIELD_POWER1 + GetProto()->eff[i].EffectMiscValue;
+	uint32 powerField = UNIT_FIELD_POWER + GetProto()->eff[i].EffectMiscValue;
 	uint32 curPower = unitTarget->GetUInt32Value(powerField);
-	if(powerField == UNIT_FIELD_POWER1 && unitTarget->IsPlayer())
+	if(powerField == UNIT_FIELD_POWER && unitTarget->IsPlayer())
 	{
 		Player* mPlayer = TO< Player* >(unitTarget);
 		if(mPlayer->IsInFeralForm())
@@ -1482,7 +1482,7 @@ void Spell::SpellEffectResurrect(uint32 i) // Resurrect (Flat)
 					}
 					unitTarget->SetHealth(hlth);
 					unitTarget->SetPower(POWER_TYPE_MANA, mana);
-					unitTarget->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+					unitTarget->SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 0);
 					unitTarget->setDeathState(ALIVE);
 					TO< Creature* >(unitTarget)->UnTag();
 					TO< Creature* >(unitTarget)->loot.gold = 0;
@@ -3229,7 +3229,7 @@ void Spell::SpellEffectSummonObject(uint32 i)
 		go->CreateFromProto(GO_FISHING_BOBBER, mapid, posx, posy, posz, orient);
 		go->SetUInt32Value(GAMEOBJECT_FLAGS, 0);
 		go->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
-		go->SetUInt64Value(OBJECT_FIELD_CREATED_BY, m_caster->GetGUID());
+		go->SetUInt64Value(GAMEOBJECT_FIELD_CREATED_BY, m_caster->GetGUID());
 		u_caster->SetChannelSpellTargetGUID(go->GetGUID());
 		go->Phase(PHASE_SET, u_caster->GetPhase());
 
@@ -3267,7 +3267,7 @@ void Spell::SpellEffectSummonObject(uint32 i)
 
 		go->CreateFromProto(entry, mapid, posx, posy, pz, orient);
 		go->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
-		go->SetUInt64Value(OBJECT_FIELD_CREATED_BY, m_caster->GetGUID());
+		go->SetUInt64Value(GAMEOBJECT_FIELD_CREATED_BY, m_caster->GetGUID());
 		go->Phase(PHASE_SET, u_caster->GetPhase());
 		go->PushToWorld(m_caster->GetMapMgr());
 		sEventMgr.AddEvent(go, &GameObject::ExpireAndDelete, EVENT_GAMEOBJECT_EXPIRE, GetDuration(), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
@@ -4416,7 +4416,7 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 	}
 
 	GoSummon->SetLevel(u_caster->getLevel());
-	GoSummon->SetUInt64Value(OBJECT_FIELD_CREATED_BY, m_caster->GetGUID());
+	GoSummon->SetUInt64Value(GAMEOBJECT_FIELD_CREATED_BY, m_caster->GetGUID());
 	GoSummon->Phase(PHASE_SET, u_caster->GetPhase());
 
 	GoSummon->PushToWorld(m_caster->GetMapMgr());
@@ -4473,7 +4473,7 @@ void Spell::SpellEffectSummonDeadPet(uint32 i)
 			SM_PIValue(p_caster->SM_PMiscEffect, &damage, GetProto()->SpellGroupType);
 		}
 
-		pPet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+		pPet->SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 0);
 		pPet->SetHealth((uint32)((pPet->GetMaxHealth() * damage) / 100));
 		pPet->setDeathState(ALIVE);
 		pPet->GetAIInterface()->HandleEvent(EVENT_FOLLOWOWNER, pPet, 0);
@@ -4565,7 +4565,7 @@ void Spell::SpellEffectResurrectNew(uint32 i)
 					}
 					unitTarget->SetHealth(hlth);
 					unitTarget->SetPower(POWER_TYPE_MANA, mana);
-					unitTarget->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+					unitTarget->SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 0);
 					unitTarget->setDeathState(ALIVE);
 					TO< Creature* >(unitTarget)->UnTag();
 					TO< Creature* >(unitTarget)->loot.gold = 0;
@@ -4626,7 +4626,7 @@ void Spell::SpellEffectSkinPlayerCorpse(uint32 i)
 
 		playerTarget->bShouldHaveLootableOnCorpse = false;
 		playerTarget->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
-		playerTarget->SetFlag(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_LOOTABLE);
+		playerTarget->SetFlag(OBJECT_DYNAMIC_FLAGS, U_DYN_FLAG_LOOTABLE);
 
 		// Send the loot.
 		p_caster->SendLoot(playerTarget->GetGUID(), LOOT_SKINNING, playerTarget->GetMapId());

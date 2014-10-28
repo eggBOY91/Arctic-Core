@@ -359,7 +359,7 @@ class SERVER_DECL QuestLogEntry : public EventableObject
 
 		ARCEMU_INLINE uint32 GetBaseField(uint32 slot)
 		{
-			return PLAYER_QUEST_LOG_1_1 + (slot * 5);
+			return PLAYER_QUEST_LOG + (slot * 5);
 		}
 		ARCEMU_INLINE int32 GetSlot() { return m_slot; }
 

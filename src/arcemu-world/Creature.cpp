@@ -363,7 +363,7 @@ void Creature::OnRespawn(MapMgr* m)
 
 	LOG_DETAIL("Respawning " I64FMT "...", GetGUID());
 	SetHealth(GetMaxHealth());
-	SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0); // not tagging shit
+	SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 0); // not tagging shit
 	if(m_spawn)
 	{
 		SetUInt32Value(UNIT_NPC_FLAGS, proto->NPCFLags);
@@ -374,7 +374,7 @@ void Creature::OnRespawn(MapMgr* m)
 		{
 			m_limbostate = true;
 			setDeathState(ALIVE);   // we are not actually dead, we just appear dead
-			SetUInt32Value(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
+			SetUInt32Value(OBJECT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
 		}
 		else if(m_spawn->death_state == CREATURE_STATE_DEAD)
 		{
@@ -906,8 +906,8 @@ void Creature::CalcStat(uint32 type)
 	else
 		pos += FlatStatMod[ type ];
 
-	SetUInt32Value(UNIT_FIELD_POSSTAT0 + type, pos);
-	SetUInt32Value(UNIT_FIELD_NEGSTAT0 + type, neg);
+	SetUInt32Value(UNIT_FIELD_POSSTAT + type, pos);
+	SetUInt32Value(UNIT_FIELD_NEGSTAT + type, neg);
 
 	int32 tot = BaseStats[ type ] + pos - neg;
 	SetStat(type, tot > 0 ? tot : 0);
@@ -939,7 +939,7 @@ void Creature::CalcStat(uint32 type)
 			{
 				//Health
 				uint32 hp = GetBaseHealth();
-				uint32 stat_bonus = GetUInt32Value(UNIT_FIELD_POSSTAT2) - GetUInt32Value(UNIT_FIELD_NEGSTAT2);
+				uint32 stat_bonus = GetUInt32Value(UNIT_FIELD_POSSTAT) - GetUInt32Value(UNIT_FIELD_NEGSTAT);
 				if(static_cast<int32>(stat_bonus) < 0) stat_bonus = 0;
 
 				uint32 bonus = stat_bonus * 10 + m_healthfromspell;
@@ -956,7 +956,7 @@ void Creature::CalcStat(uint32 type)
 				if(GetPowerType() == POWER_TYPE_MANA)
 				{
 					uint32 mana = GetBaseMana();
-					uint32 stat_bonus = (GetUInt32Value(UNIT_FIELD_POSSTAT3) - GetUInt32Value(UNIT_FIELD_NEGSTAT3));
+					uint32 stat_bonus = (GetUInt32Value(UNIT_FIELD_POSSTAT) - GetUInt32Value(UNIT_FIELD_NEGSTAT));
 					if(static_cast<int32>(stat_bonus) < 0) stat_bonus = 0;
 
 					uint32 bonus = stat_bonus * 15;
@@ -1403,7 +1403,7 @@ bool Creature::Load(CreatureSpawn* spawn, uint32 mode, MapInfo* info)
 	if(spawn->death_state == CREATURE_STATE_APPEAR_DEAD)
 	{
 		m_limbostate = true;
-		SetUInt32Value(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
+		SetUInt32Value(OBJECT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
 	}
 	else if(spawn->death_state == CREATURE_STATE_DEAD)
 	{

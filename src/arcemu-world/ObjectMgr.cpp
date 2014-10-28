@@ -1046,7 +1046,7 @@ uint32 ObjectMgr::GenerateMailID()
 }
 uint32 ObjectMgr::GenerateLowGuid(uint32 guidhigh)
 {
-	ARCEMU_ASSERT(guidhigh == HIGHGUID_TYPE_ITEM || guidhigh == HIGHGUID_TYPE_CONTAINER || guidhigh == HIGHGUID_TYPE_PLAYER);
+	ARCEMU_ASSERT(guidhigh == HIGHGUID_TYPE_ITEM || guidhigh == HIGHGUID_TYPE_ITEM || guidhigh == HIGHGUID_TYPE_PLAYER);
 
 	uint32 ret;
 	if(guidhigh == HIGHGUID_TYPE_ITEM)
@@ -1586,7 +1586,7 @@ Item* ObjectMgr::CreateItem(uint32 entry, Player* owner)
 
 	if(proto->InventoryType == INVTYPE_BAG)
 	{
-		Container* pContainer = new Container(HIGHGUID_TYPE_CONTAINER, GenerateLowGuid(HIGHGUID_TYPE_CONTAINER));
+		Container* pContainer = new Container(HIGHGUID_TYPE_ITEM, GenerateLowGuid(HIGHGUID_TYPE_ITEM));
 		pContainer->Create(entry, owner);
 		pContainer->SetStackCount(1);
 		return pContainer;
@@ -1621,7 +1621,7 @@ Item* ObjectMgr::LoadItem(uint32 lowguid)
 
 		if(pProto->InventoryType == INVTYPE_BAG)
 		{
-			Container* pContainer = new Container(HIGHGUID_TYPE_CONTAINER, lowguid);
+			Container* pContainer = new Container(HIGHGUID_TYPE_ITEM, lowguid);
 			pContainer->LoadFromDB(result->Fetch());
 			pReturn = pContainer;
 		}

@@ -60,7 +60,7 @@ struct TrainerSpell;
 //#define CHECK_PACKET_SIZE(x, y) if(y > 0 && x.size() < y) { _socket->Disconnect(); return; }
 
 // MovementFlags Contribution by Tenshi
-// toDo: add new ones from 4.3.4 15595
+// toDo: cleanup
 enum MovementFlags
 {
     // Byte 1 (Resets on Movement Key Press)

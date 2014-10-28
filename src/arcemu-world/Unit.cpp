@@ -2728,7 +2728,7 @@ void Unit::RegeneratePower(bool isinterrupted)
 				{
 					if(!CombatStatus.IsInCombat())
 					{
-						uint32 cur = GetUInt32Value(UNIT_FIELD_POWER5);
+						uint32 cur = GetUInt32Value(UNIT_FIELD_POWER);
 						SetPower(POWER_TYPE_RUNIC_POWER, cur - 20);
 					}
 				}
@@ -5414,7 +5414,7 @@ uint32 Unit::ManaShieldAbsorb(uint32 dmg)
 
 	uint32 cost = (potential * (100 + effectbonus)) / 50;
 
-	SetUInt32Value(UNIT_FIELD_POWER1, mana - cost);
+	SetUInt32Value(UNIT_FIELD_POWER, mana - cost);
 	m_manashieldamt -= potential;
 	if(!m_manashieldamt)
 		RemoveAura(m_manaShieldId);
@@ -7678,20 +7678,20 @@ void Unit::RemoveReflect(uint32 spellid, bool apply)
 
 void Unit::SetPower(uint32 type, int32 value)
 {
-	uint32 maxpower = GetUInt32Value(UNIT_FIELD_MAXPOWER1 + type);
+	uint32 maxpower = GetUInt32Value(UNIT_FIELD_MAXPOWER + type);
 
 	if(value < 0)
 		value = 0;
 	else if(value > (int32)maxpower)
 		value = maxpower;
 
-	SetUInt32Value(UNIT_FIELD_POWER1 + type, value);
+	SetUInt32Value(UNIT_FIELD_POWER + type, value);
 }
 
 // DISABLED - NOT UPDATED
 void Unit::SendPowerUpdate(bool self)
 {
-	/*uint32 amount = GetUInt32Value(UNIT_FIELD_POWER1 + GetPowerType()); //save the amount, so we send the same to the player and everyone else
+	/*uint32 amount = GetUInt32Value(UNIT_FIELD_POWER + GetPowerType()); //save the amount, so we send the same to the player and everyone else
 
 	WorldPacket data(SMSG_POWER_UPDATE, 14);
 	FastGUIDPack(data, GetGUID());
@@ -7703,7 +7703,7 @@ void Unit::SendPowerUpdate(bool self)
 	SendMessageToSet(&data, self);
 
 	//VLack: On 3.1.3, create and send a field update packet to everyone else, as this is the only way to update their GUI with the power values.
-	WorldPacket* pkt = BuildFieldUpdatePacket(UNIT_FIELD_POWER1 + GetPowerType(), amount);
+	WorldPacket* pkt = BuildFieldUpdatePacket(UNIT_FIELD_POWER + GetPowerType(), amount);
 	SendMessageToSet(pkt, false);
 	delete pkt;*/
 }
@@ -7716,7 +7716,7 @@ void Unit::UpdatePowerAmm()
 	WorldPacket data(SMSG_POWER_UPDATE, 14);
 	FastGUIDPack(data, GetGUID());
 	data << uint8(GetPowerType());
-	data << GetUInt32Value(UNIT_FIELD_POWER1 + GetPowerType());
+	data << GetUInt32Value(UNIT_FIELD_POWER + GetPowerType());
 	SendMessageToSet(&data, true);*/
 }
 
@@ -7785,7 +7785,7 @@ void Unit::Tag(uint64 TaggerGUID)
 {
 	Tagged = true;
 	this->TaggerGuid = TaggerGUID;
-	m_uint32Values[ UNIT_DYNAMIC_FLAGS ] |= U_DYN_FLAG_TAGGED_BY_OTHER;
+	m_uint32Values[ OBJECT_DYNAMIC_FLAGS ] |= U_DYN_FLAG_TAGGED_BY_OTHER;
 
 }
 
@@ -7793,7 +7793,7 @@ void Unit::UnTag()
 {
 	Tagged = false;
 	TaggerGuid = 0;
-	m_uint32Values[ UNIT_DYNAMIC_FLAGS ] &= ~U_DYN_FLAG_TAGGED_BY_OTHER;
+	m_uint32Values[ OBJECT_DYNAMIC_FLAGS ] &= ~U_DYN_FLAG_TAGGED_BY_OTHER;
 }
 
 bool Unit::IsTagged()
