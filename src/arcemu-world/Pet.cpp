@@ -720,7 +720,7 @@ void Pet::LoadFromDB(Player* owner, PlayerPet* pi)
 	if(HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DEAD))   //LoadFromDB() (called by Player::SpawnPet() ) now always revive the Pet if it was dead.
 		//This is because now we call SpawnPet() only if it's alive or we wanna revive it.
 	{
-		SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+		SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 0);
 		SetHealth(GetMaxHealth());  //this is modified (if required) in Spell::SpellEffectSummonDeadPet()
 		setDeathState(ALIVE);
 	}

@@ -2199,7 +2199,7 @@ void Player::InitVisibleUpdateBits()
 	Player::m_visibleUpdateMask.SetBit(UNIT_FIELD_CHANNEL_OBJECT);
 	Player::m_visibleUpdateMask.SetBit(UNIT_FIELD_CHANNEL_OBJECT + 1);
 	Player::m_visibleUpdateMask.SetBit(UNIT_CHANNEL_SPELL);
-	Player::m_visibleUpdateMask.SetBit(UNIT_DYNAMIC_FLAGS);
+	Player::m_visibleUpdateMask.SetBit(OBJECT_DYNAMIC_FLAGS);
 	Player::m_visibleUpdateMask.SetBit(UNIT_NPC_FLAGS);
 	Player::m_visibleUpdateMask.SetBit(UNIT_FIELD_HOVERHEIGHT);
 
@@ -2222,14 +2222,14 @@ void Player::InitVisibleUpdateBits()
 		uint32 offset = i * PLAYER_VISIBLE_ITEM_LENGTH; //VLack: for 3.1.1 "* 18" is a bad idea, now it's "* 2"; but this could have been calculated based on UpdateFields.h! This is PLAYER_VISIBLE_ITEM_LENGTH
 
 		// item entry
-		Player::m_visibleUpdateMask.SetBit(PLAYER_VISIBLE_ITEM_1_ENTRYID + offset);
+		Player::m_visibleUpdateMask.SetBit(PLAYER_VISIBLE_ITEM + VISIBLE_ITEM_ENTRY_OFFSET + offset);
 		// enchant
-		Player::m_visibleUpdateMask.SetBit(PLAYER_VISIBLE_ITEM_1_ENCHANTMENT + offset);
+		Player::m_visibleUpdateMask.SetBit(PLAYER_VISIBLE_ITEM + VISIBLE_ITEM_ENCHANTMENT_OFFSET + offset);
 	}
 
 	//VLack: we have to send our quest list to the members of our group all the time for quest sharing's "who's on that quest" feature to work (in the quest log this way a number will be shown before the quest's name).
 	//Unfortunately we don't have code for doing this only on our group's members, so everyone will receive it. The non-group member's client will do whatever it wants with it, probably wasting a few CPU cycles, but that's fine with me.
-	for(uint16 i = PLAYER_QUEST_LOG_1_1; i <= PLAYER_QUEST_LOG_25_1; i += 5)
+	for(uint16 i = PLAYER_QUEST_LOG; i <= PLAYER_QUEST_LOG_25_1; i += 5)
 	{
 		Player::m_visibleUpdateMask.SetBit(i);
 	}
@@ -3515,7 +3515,7 @@ void Player::_LoadQuestLogEntry(QueryResult* result)
 	// clear all fields
 	for(int i = 0; i < 25; ++i)
 	{
-		baseindex = PLAYER_QUEST_LOG_1_1 + (i * 5);
+		baseindex = PLAYER_QUEST_LOG + (i * 5);
 		SetUInt32Value(baseindex + 0, 0);
 		SetUInt32Value(baseindex + 1, 0);
 		SetUInt64Value(baseindex + 2, 0);
@@ -4628,7 +4628,7 @@ void Player::KillPlayer()
 	StopMirrorTimer(2);
 
 	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE); // Player death animation, also can be used with DYNAMIC_FLAGS <- huh???
-	SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0x00);
+	SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 0x00);
 
 	if(getClass() == WARRIOR)   // Rage resets on death
 		SetPower(POWER_TYPE_RAGE, 0);
@@ -4685,7 +4685,7 @@ void Player::CreateCorpse()
 	if(m_bg)
 	{
 		// Remove our lootable flags
-		RemoveFlag(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_LOOTABLE);
+		RemoveFlag(OBJECT_DYNAMIC_FLAGS, U_DYN_FLAG_LOOTABLE);
 		RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 
 		loot.gold = 0;
@@ -5771,7 +5771,7 @@ bool Player::CanSee(Object* obj) // * Invisibility & Stealth Detection - Partha 
 
 				if(gObj->invisible) // Invisibility - Detection of GameObjects
 				{
-					uint64 owner = gObj->GetUInt64Value(OBJECT_FIELD_CREATED_BY);
+					uint64 owner = gObj->GetUInt64Value(GAMEOBJECT_FIELD_CREATED_BY);
 
 					if(GetGUID() == owner) // the owner of an object can always see it
 						return true;
@@ -6304,12 +6304,12 @@ bool Player::removeDeletedSpell(uint32 SpellID)
 
 void Player::EventActivateGameObject(GameObject* obj)
 {
-	obj->BuildFieldUpdatePacket(this, GAMEOBJECT_DYNAMIC, 1 | 8);
+	obj->BuildFieldUpdatePacket(this, OBJECT_DYNAMIC_FLAGS, 1 | 8);
 }
 
 void Player::EventDeActivateGameObject(GameObject* obj)
 {
-	obj->BuildFieldUpdatePacket(this, GAMEOBJECT_DYNAMIC, 0);
+	obj->BuildFieldUpdatePacket(this, OBJECT_DYNAMIC_FLAGS, 0);
 }
 
 void Player::EventTimedQuestExpire( uint32 questid ){
@@ -7996,7 +7996,7 @@ void Player::RequestDuel(Player* pTarget)
 	pGameObj->CreateFromProto(21680, GetMapId(), x, y, z, GetOrientation());
 
 	//Spawn the Flag
-	pGameObj->SetUInt64Value(OBJECT_FIELD_CREATED_BY, GetGUID());
+	pGameObj->SetUInt64Value(GAMEOBJECT_FIELD_CREATED_BY, GetGUID());
 	pGameObj->SetFaction(GetFaction());
 	pGameObj->SetLevel(getLevel());
 
@@ -10110,8 +10110,8 @@ void Player::_AddSkillLine(uint32 SkillLine, uint32 Curr_sk, uint32 Max_sk)
 //!!! todo: update skill fields, so we can get skill_langs to work !!!
 void Player::_UpdateSkillFields()
 {
-	uint32 f = PLAYER_SKILL_RANK_0;     // field
-	uint32 m = PLAYER_SKILL_MAX_RANK_0; // maximum (not used currently)
+	uint32 f = PLAYER_SKILL_LINEID + SKILL_RANK_OFFSET;     // field
+	uint32 m = PLAYER_SKILL_LINEID + SKILL_MAX_RANK_OFFSET; // maximum (not used currently)
 	
 	/* Set the valid skills */
 	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end();)

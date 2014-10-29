@@ -458,7 +458,7 @@ void WorldSession::HandleLootReleaseOpcode(WorldPacket & recv_data)
 					if(_player->HasQuestForItem(i->item.itemproto->ItemId))
 						return;
 				}
-			pCreature->BuildFieldUpdatePacket(_player, UNIT_DYNAMIC_FLAGS, 0);
+			pCreature->BuildFieldUpdatePacket(_player, OBJECT_DYNAMIC_FLAGS, 0);
 
 			if(!pCreature->Skinned)
 			{
@@ -594,7 +594,7 @@ void WorldSession::HandleLootReleaseOpcode(WorldPacket & recv_data)
 		{
 			plr->bShouldHaveLootableOnCorpse = false;
 			plr->loot.items.clear();
-			plr->RemoveFlag(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_LOOTABLE);
+			plr->RemoveFlag(OBJECT_DYNAMIC_FLAGS, U_DYN_FLAG_LOOTABLE);
 		}
 	}
 	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_ITEM)     // Loot from items, eg. sacks, milling, prospecting...
@@ -1946,9 +1946,9 @@ void WorldSession::HandleInspectOpcode(WorldPacket & recv_data)
 
 		data << uint16(enchant_mask);
 
-		for(uint32 Slot = 0; Slot < MAX_ENCHANTMENT_SLOT; ++Slot) // In UpdateFields.h we have ITEM_FIELD_ENCHANTMENT_1_1 to ITEM_FIELD_ENCHANTMENT_12_1, iterate on them...
+		for(uint32 Slot = 0; Slot < MAX_ENCHANTMENT_SLOT; ++Slot) // In UpdateFields.h we have ITEM_FIELD_ENCHANTMENT to ITEM_FIELD_ENCHANTMENT_12_1, iterate on them...
 		{
-			uint32 enchantId = item->GetEnchantmentId(Slot);   // This calculation has to be in sync with Item.cpp line ~614, at the moment it is:    uint32 EnchantBase = Slot * 3 + ITEM_FIELD_ENCHANTMENT_1_1;
+			uint32 enchantId = item->GetEnchantmentId(Slot);   // This calculation has to be in sync with Item.cpp line ~614, at the moment it is:    uint32 EnchantBase = Slot * 3 + ITEM_FIELD_ENCHANTMENT;
 
 			if(!enchantId)
 				continue;

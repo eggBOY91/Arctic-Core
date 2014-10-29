@@ -879,8 +879,8 @@ void Object::_BuildValuesUpdate(ByteBuffer* data, UpdateMask* updateMask, Player
 			if(pThis->IsTagged() && (pThis->loot.gold || pThis->loot.items.size()))
 			{
 				// Let's see if we're the tagger or not.
-				oldflags = m_uint32Values[UNIT_DYNAMIC_FLAGS];
-				uint32 Flags = m_uint32Values[UNIT_DYNAMIC_FLAGS];
+				oldflags = m_uint32Values[OBJECT_DYNAMIC_FLAGS];
+				uint32 Flags = m_uint32Values[OBJECT_DYNAMIC_FLAGS];
 				uint32 oldFlags = 0;
 
 				if(pThis->GetTaggerGUID() == target->GetGUID())
@@ -906,9 +906,9 @@ void Object::_BuildValuesUpdate(ByteBuffer* data, UpdateMask* updateMask, Player
 						Flags &= ~oldFlags;
 				}
 
-				m_uint32Values[UNIT_DYNAMIC_FLAGS] = Flags;
+				m_uint32Values[OBJECT_DYNAMIC_FLAGS] = Flags;
 
-				updateMask->SetBit(UNIT_DYNAMIC_FLAGS);
+				updateMask->SetBit(OBJECT_DYNAMIC_FLAGS);
 
 				reset = true;
 			}
@@ -997,10 +997,10 @@ void Object::_BuildValuesUpdate(ByteBuffer* data, UpdateMask* updateMask, Player
 
 	if(activate_quest_object)
 	{
-		oldflags = m_uint32Values[GAMEOBJECT_DYNAMIC];
-		if(!updateMask->GetBit(GAMEOBJECT_DYNAMIC))
-			updateMask->SetBit(GAMEOBJECT_DYNAMIC);
-		m_uint32Values[GAMEOBJECT_DYNAMIC] = 1 | 8; // 8 to show sparkles
+		oldflags = m_uint32Values[OBJECT_DYNAMIC_FLAGS];
+		if(!updateMask->GetBit(OBJECT_DYNAMIC_FLAGS))
+			updateMask->SetBit(OBJECT_DYNAMIC_FLAGS);
+		m_uint32Values[OBJECT_DYNAMIC_FLAGS] = 1 | 8; // 8 to show sparkles
 		reset = true;
 	}
 
@@ -1035,10 +1035,10 @@ void Object::_BuildValuesUpdate(ByteBuffer* data, UpdateMask* updateMask, Player
 		switch(GetTypeId())
 		{
 			case TYPEID_UNIT:
-				m_uint32Values[UNIT_DYNAMIC_FLAGS] = oldflags;
+				m_uint32Values[OBJECT_DYNAMIC_FLAGS] = oldflags;
 				break;
 			case TYPEID_GAMEOBJECT:
-				m_uint32Values[GAMEOBJECT_DYNAMIC] = oldflags;
+				m_uint32Values[OBJECT_DYNAMIC_FLAGS] = oldflags;
 				break;
 		}
 	}

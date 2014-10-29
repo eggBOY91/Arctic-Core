@@ -4911,7 +4911,7 @@ void Aura::SpellAuraFeignDeath(bool apply)
 
 			p_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
 			p_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH);
-			p_target->SetFlag(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
+			p_target->SetFlag(OBJECT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
 
 			//now get rid of mobs agro. pTarget->CombatStatus.AttackersForgetHate() - this works only for already attacking mobs
 			for(std::set<Object*>::iterator itr = p_target->GetInRangeSetBegin(); itr != p_target->GetInRangeSetEnd(); itr++)
@@ -4968,7 +4968,7 @@ void Aura::SpellAuraFeignDeath(bool apply)
 		{
 			p_target->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
 			p_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH);
-			p_target->RemoveFlag(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
+			p_target->RemoveFlag(OBJECT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
 			data.SetOpcode(SMSG_STOP_MIRROR_TIMER);
 			data << uint32(TIMER_FEIGNDEATH);
 			p_target->GetSession()->SendPacket(&data);
@@ -7573,11 +7573,11 @@ void Aura::SpellAuraEmphaty(bool apply)
 		return;
 
 	// Show extra info about beast
-	uint32 dynflags = m_target->GetUInt32Value(UNIT_DYNAMIC_FLAGS);
+	uint32 dynflags = m_target->GetUInt32Value(OBJECT_DYNAMIC_FLAGS);
 	if(apply)
 		dynflags |= U_DYN_FLAG_PLAYER_INFO;
 
-	m_target->BuildFieldUpdatePacket(caster, UNIT_DYNAMIC_FLAGS, dynflags);
+	m_target->BuildFieldUpdatePacket(caster, OBJECT_DYNAMIC_FLAGS, dynflags);
 }
 
 void Aura::SpellAuraModOffhandDamagePCT(bool apply)

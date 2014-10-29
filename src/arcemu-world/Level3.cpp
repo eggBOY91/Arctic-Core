@@ -940,7 +940,7 @@ bool ChatHandler::HandleNpcInfoCommand(const char* args, WorldSession* m_session
 		if((unitflags & UnitFlagToName[ i ].Flag) != 0)
 			SystemMessage(m_session, "%s", UnitFlagToName[ i ].Name);
 
-	uint32 dynflags = crt->GetUInt32Value(UNIT_DYNAMIC_FLAGS);
+	uint32 dynflags = crt->GetUInt32Value(OBJECT_DYNAMIC_FLAGS);
 	SystemMessage(m_session, "Unit dynamic flags: %u", dynflags);
 
 	for(uint32 i = 0; i < numdynflags; i++)

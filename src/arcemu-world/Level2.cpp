@@ -952,7 +952,7 @@ bool ChatHandler::HandleGOInfo(const char* args, WorldSession* m_session)
 	SystemMessage(m_session, "%s Model:%s%u",	MSG_COLOR_GREEN, MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_DISPLAYID));
 	SystemMessage(m_session, "%s State:%s%u",	MSG_COLOR_GREEN, MSG_COLOR_LIGHTBLUE, GObj->GetByte(GAMEOBJECT_BYTES_1, 0));
 	SystemMessage(m_session, "%s flags:%s%u",	MSG_COLOR_GREEN, MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_FLAGS));
-	SystemMessage(m_session, "%s dynflags:%s%u", MSG_COLOR_GREEN, MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_DYNAMIC));
+	SystemMessage(m_session, "%s dynflags:%s%u", MSG_COLOR_GREEN, MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(OBJECT_DYNAMIC_FLAGS));
 	SystemMessage(m_session, "%s faction:%s%u",	MSG_COLOR_GREEN, MSG_COLOR_LIGHTBLUE, GObj->GetFaction());
 	SystemMessage(m_session, "%s phase:%s%u",	MSG_COLOR_GREEN, MSG_COLOR_LIGHTBLUE, GObj->GetPhase());
 
@@ -1080,16 +1080,16 @@ bool ChatHandler::HandleGOEnable(const char* args, WorldSession* m_session)
 		RedSystemMessage(m_session, "No selected GameObject...");
 		return true;
 	}
-	if(GObj->GetUInt32Value(GAMEOBJECT_DYNAMIC) == 1)
+	if(GObj->GetUInt32Value(OBJECT_DYNAMIC_FLAGS) == 1)
 	{
 		// Deactivate
-		GObj->SetUInt32Value(GAMEOBJECT_DYNAMIC, 0);
+		GObj->SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 0);
 		BlueSystemMessage(m_session, "Gameobject deactivated.");
 	}
 	else
 	{
 		// /Activate
-		GObj->SetUInt32Value(GAMEOBJECT_DYNAMIC, 1);
+		GObj->SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 1);
 		BlueSystemMessage(m_session, "Gameobject activated.");
 	}
 	sGMLog.writefromsession(m_session, "activated/deactivated gameobject %s, entry %u", GameObjectNameStorage.LookupEntry(GObj->GetEntry())->Name, GObj->GetEntry());
