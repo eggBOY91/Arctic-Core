@@ -1,4 +1,6 @@
 Arctic-Core
 ======
 
-The core is not stable at the moment!
+REMINDERS: (todo)
+1. https://github.com/ijustwantedtosayhi/arcemu/commit/41f811f0488feb4e72988db624c222aa3eeee0b7
+2. https://github.com/ijustwantedtosayhi/arcemu/commit/685e1be6d3b88ce09d2742a25f8a38a355815079

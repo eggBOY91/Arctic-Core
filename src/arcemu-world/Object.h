@@ -24,80 +24,27 @@
 class Unit;
 class Group;
 
-// 6.x
-// todo: document this
 enum HIGHGUID_TYPE
 {
-    HIGHGUID_TYPE_NULL             = 0,
-    HIGHGUID_TYPE_UNIQ             = 1,
-    HIGHGUID_TYPE_PLAYER           = 2,
-    HIGHGUID_TYPE_ITEM             = 3, // replaces HIGHGUID_TYPE_CONTAINER
-    HIGHGUID_TYPE_STATICDOOR       = 4,
-    HIGHGUID_TYPE_TRANSPORTER      = 5, // _TRANSPORT
-    HIGHGUID_TYPE_CONVERSATION     = 6,
-    HIGHGUID_TYPE_UNIT             = 7, // CREATURE
-    HIGHGUID_TYPE_VEHICLE          = 8,
-    HIGHGUID_TYPE_PET              = 9,
-    HIGHGUID_TYPE_GAMEOBJECT       = 10,
-    HIGHGUID_TYPE_DYNAMICOBJECT    = 11,
-    HIGHGUID_TYPE_AREATRIGGER      = 12,
-    HIGHGUID_TYPE_CORPSE           = 13,
-    HIGHGUID_TYPE_WAYPOINT         = 0x10000000, // gone in 6.x or what?
-
-    HIGHGUID_TYPE_LootObject       = 14,
-    HIGHGUID_TYPE_SceneObject      = 15,
-    HIGHGUID_TYPE_Scenario         = 16,
-    HIGHGUID_TYPE_AIGroup          = 17,
-    HIGHGUID_TYPE_DynamicDoor      = 18,
-    HIGHGUID_TYPE_ClientActor      = 19,
-    HIGHGUID_TYPE_Vignette         = 20,
-    HIGHGUID_TYPE_CallForHelp      = 21,
-    HIGHGUID_TYPE_AIResource       = 22,
-    HIGHGUID_TYPE_AILock           = 23,
-    HIGHGUID_TYPE_AILockTicket     = 24,
-    HIGHGUID_TYPE_ChatChannel      = 25,
-    HIGHGUID_TYPE_Party            = 26,
-    HIGHGUID_TYPE_GUILD            = 27,
-    HIGHGUID_TYPE_WowAccount       = 28,
-    HIGHGUID_TYPE_BNetAccount      = 29,
-    HIGHGUID_TYPE_GMTask           = 30,
-    HIGHGUID_TYPE_MobileSession    = 31,
-    HIGHGUID_TYPE_RaidGroup        = 32,
-    HIGHGUID_TYPE_Spell            = 33,
-    HIGHGUID_TYPE_Mail             = 34,
-    HIGHGUID_TYPE_WebObj           = 35,
-    HIGHGUID_TYPE_LFGObject        = 36,
-    HIGHGUID_TYPE_LFGList          = 37,
-    HIGHGUID_TYPE_UserRouter       = 38,
-    HIGHGUID_TYPE_PVPQueueGroup    = 39,
-    HIGHGUID_TYPE_UserClient       = 40,
-    HIGHGUID_TYPE_PetBattle        = 41,
-    HIGHGUID_TYPE_UniqueUserClient = 42,
-    HIGHGUID_TYPE_BattlePet        = 43,
-
-
-
-
-    //!!! old
-    //HIGHGUID_TYPE_ITEM           = 0x470,                       // blizz 4000
-    //HIGHGUID_TYPE_CONTAINER      = 0x470,                       // blizz 4000
-    //HIGHGUID_TYPE_PLAYER         = 0x000,                       // blizz 0000
-    //HIGHGUID_TYPE_GAMEOBJECT     = 0xF11,                       // blizz F110
-    //HIGHGUID_TYPE_TRANSPORTER    = 0xF12,                       // blizz F120 (for GAMEOBJECT_TYPE_TRANSPORT)
-    //HIGHGUID_TYPE_UNIT           = 0xF13,                       // blizz F130
-    //HIGHGUID_TYPE_PET            = 0xF14,                       // blizz F140
-    //HIGHGUID_TYPE_VEHICLE        = 0xF15,                       // blizz F550
-    //HIGHGUID_TYPE_DYNAMICOBJECT  = 0xF10,                       // blizz F100
-    //HIGHGUID_TYPE_CORPSE         = 0xF50,                      // blizz F100
-    //HIGHGUID_TYPE_AREATRIGGER    = 0xF102,                      // blizz F100
-    //HIGHGUID_TYPE_BATTLEGROUND   = 0x1F1,                       // new 4.x
-    //HIGHGUID_TYPE_MO_TRANSPORT   = 0x1FC,                       // blizz 1FC0 (for GAMEOBJECT_TYPE_MO_TRANSPORT)
-    //HIGHGUID_TYPE_GROUP          = 0x1F5,                        // hmm?
-    //HIGHGUID_TYPE_GUILD          = 0x1FF7,                        // new 4.x
-	//HIGHGUID_TYPE_WAYPOINT	    = 0x10000000,
+    HIGHGUID_TYPE_ITEM           = 0x470,                       // blizz 4000
+    HIGHGUID_TYPE_CONTAINER      = 0x470,                       // blizz 4000
+    HIGHGUID_TYPE_PLAYER         = 0x000,                       // blizz 0000
+    HIGHGUID_TYPE_GAMEOBJECT     = 0xF11,                       // blizz F110
+    HIGHGUID_TYPE_TRANSPORTER    = 0xF12,                       // blizz F120 (for GAMEOBJECT_TYPE_TRANSPORT)
+    HIGHGUID_TYPE_UNIT           = 0xF13,                       // blizz F130
+    HIGHGUID_TYPE_PET            = 0xF14,                       // blizz F140
+    HIGHGUID_TYPE_VEHICLE        = 0xF15,                       // blizz F550
+    HIGHGUID_TYPE_DYNAMICOBJECT  = 0xF10,                       // blizz F100
+    HIGHGUID_TYPE_CORPSE         = 0xF50,                      // blizz F100
+    HIGHGUID_TYPE_AREATRIGGER    = 0xF102,                      // blizz F100
+    HIGHGUID_TYPE_BATTLEGROUND   = 0x1F1,                       // new 4.x
+    HIGHGUID_TYPE_MO_TRANSPORT   = 0x1FC,                       // blizz 1FC0 (for GAMEOBJECT_TYPE_MO_TRANSPORT)
+    HIGHGUID_TYPE_GROUP          = 0x1F5,                        // hmm?
+    HIGHGUID_TYPE_GUILD          = 0x1FF7,                        // new 4.x
+	HIGHGUID_TYPE_WAYPOINT	     = 0x10000000,
 //===============================================
     HIGHGUID_TYPE_MASK				= 0xFFF00000,
-    LOWGUID_ENTRY_MASK				= 0x00FFFFFF
+    LOWGUID_ENTRY_MASK				= 0x00FFFFFF,
 };
 
 #define GET_TYPE_FROM_GUID(x) ( Arcemu::Util::GUID_HIPART( (x) ) & HIGHGUID_TYPE_MASK )
@@ -105,31 +52,33 @@ enum HIGHGUID_TYPE
 
 #define MAX_INTERACTION_RANGE 5.0f
 
+// TODO: fix that type mess
+
 enum TYPE
 {
-    TYPE_OBJECT		   = 1,
+    TYPE_OBJECT		 = 1,
     TYPE_ITEM		   = 2,
-    TYPE_CONTAINER	   = 4,
+    TYPE_CONTAINER	  = 4,
     TYPE_UNIT		   = 8,
-    TYPE_PLAYER		   = 16,
-    TYPE_GAMEOBJECT	   = 32,
-    TYPE_DYNAMICOBJECT = 64,
-    TYPE_CORPSE		   = 128,
-    TYPE_AIGROUP	   = 256,
-    TYPE_AREATRIGGER   = 512,
+    TYPE_PLAYER		 = 16,
+    TYPE_GAMEOBJECT	 = 32,
+    TYPE_DYNAMICOBJECT  = 64,
+    TYPE_CORPSE		 = 128,
+    TYPE_AIGROUP		= 256,
+    TYPE_AREATRIGGER	= 512,
 };
 
 enum TYPEID
 {
-    TYPEID_OBJECT		 = 0,
-    TYPEID_ITEM		     = 1,
+    TYPEID_OBJECT		= 0,
+    TYPEID_ITEM		  = 1,
     TYPEID_CONTAINER	 = 2,
-    TYPEID_UNIT		     = 3,
-    TYPEID_PLAYER		 = 4,
-    TYPEID_GAMEOBJECT	 = 5,
+    TYPEID_UNIT		  = 3,
+    TYPEID_PLAYER		= 4,
+    TYPEID_GAMEOBJECT	= 5,
     TYPEID_DYNAMICOBJECT = 6,
-    TYPEID_CORPSE		 = 7,
-    TYPEID_AIGROUP	     = 8,
+    TYPEID_CORPSE		= 7,
+    TYPEID_AIGROUP	   = 8,
     TYPEID_AREATRIGGER   = 9,
 };
 

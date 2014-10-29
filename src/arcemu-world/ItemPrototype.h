@@ -24,7 +24,7 @@ class Spell;
 
 #define MAX_INVENTORY_SLOT 150
 #define MAX_BUYBACK_SLOT 12
-//#define MAX_BUYBACK_SLOT ((PLAYER_FIELD_KEYRING_SLOT_1 - PLAYER_FIELD_INV_SLOT_HEAD) >> 1)
+//#define MAX_BUYBACK_SLOT ((PLAYER_FIELD_KEYRING_SLOT_1 - PLAYER_FIELD_VENDORBUYBACK_SLOT_1) >> 1)
 
 #define ITEM_NO_SLOT_AVAILABLE -1 //works for all kind of slots now
 #define INVENTORY_SLOT_NOT_SET -1
@@ -551,9 +551,7 @@ enum SPECIAL_ITEM_TYPE // dictates what bag-types an item can go into
     ITEM_TYPE_SBEQUIPMENT	= 0x800,	// Soulbound Equipment (wtf is this anyway?)
     ITEM_TYPE_VANITYPETS	= 0x1000,	// Vanity Pets (no idea what this is here for, there's no 'vanity-pet bag', although perhaps they started on one then changed their minds and made the pets/mounts window)
     ITEM_TYPE_CURRENCY		= 0x2000,	// Currency. duh. (currency tab in char window)
-    ITEM_TYPE_QUEST_ITEMS   = 0x4000,	// Quest items.
-    ITEM_TYPE_FISHING_SUPP  = 0x00008000,
-    ITEM_TYPE_COOKING_SUPP  = 0x00010000
+    ITEM_TYPE_QUEST_ITEMS   = 0x4000	// Quest items.
 };
 
 enum SOCKET_GEM_COLOR

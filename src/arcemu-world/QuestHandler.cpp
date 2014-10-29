@@ -576,7 +576,7 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket & recvPacket)
 	// remove icon
 	/*if(qst_giver->GetTypeId() == TYPEID_UNIT)
 	{
-		qst_giver->BuildFieldUpdatePacket(GetPlayer(), OBJECT_DYNAMIC_FLAGS, qst_giver->GetUInt32Value(OBJECT_DYNAMIC_FLAGS));
+		qst_giver->BuildFieldUpdatePacket(GetPlayer(), UNIT_DYNAMIC_FLAGS, qst_giver->GetUInt32Value(UNIT_DYNAMIC_FLAGS));
 	}*/
 
 	//check for room in inventory for all items

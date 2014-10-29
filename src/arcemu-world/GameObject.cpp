@@ -73,7 +73,7 @@ GameObject::~GameObject()
 		myScript = NULL;
 	}
 
-	uint32 guid = GetUInt32Value(GAMEOBJECT_FIELD_CREATED_BY);
+	uint32 guid = GetUInt32Value(OBJECT_FIELD_CREATED_BY);
 	if(guid)
 	{
 		Player* plr = objmgr.GetPlayer(guid);
@@ -700,12 +700,12 @@ void GameObject::ExpireAndDelete()
 //! Deactivates selected gameobject ex. stops doors from opening/closing.
 void GameObject::Deactivate()
 {
-	SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 0);
+	SetUInt32Value(GAMEOBJECT_DYNAMIC, 0);
 }
 
 void GameObject::Activate()
 {
-	SetUInt32Value(OBJECT_DYNAMIC_FLAGS, 1);
+	SetUInt32Value(GAMEOBJECT_DYNAMIC, 1);
 }
 
 void GameObject::CallScriptUpdate()

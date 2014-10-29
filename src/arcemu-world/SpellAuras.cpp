@@ -3137,9 +3137,9 @@ void Aura::SpellAuraPeriodicEnergize(bool apply)
 
 void Aura::EventPeriodicEnergize(uint32 amount, uint32 type)
 {
-	uint32 POWER_TYPE = UNIT_FIELD_POWER + type;
+	uint32 POWER_TYPE = UNIT_FIELD_POWER1 + type;
 
-	ARCEMU_ASSERT(POWER_TYPE <= UNIT_FIELD_POWER);
+	ARCEMU_ASSERT(POWER_TYPE <= UNIT_FIELD_POWER5);
 
 	Unit* ucaster = GetUnitCaster();
 	if(ucaster == NULL)
@@ -3530,18 +3530,18 @@ void Aura::SpellAuraModIncreaseEnergy(bool apply)
 
 	/*if(powerType == POWER_TYPE_MANA) // Mana
 	{
-		powerField = UNIT_FIELD_POWER;
-		maxField = UNIT_FIELD_MAXPOWER;
+		powerField = UNIT_FIELD_POWER1;
+		maxField = UNIT_FIELD_MAXPOWER1;
 	}
 	else if(powerType == POWER_TYPE_RAGE) // Rage
 	{
-		powerField = UNIT_FIELD_POWER;
-		maxField = UNIT_FIELD_MAXPOWER;
+		powerField = UNIT_FIELD_POWER2;
+		maxField = UNIT_FIELD_MAXPOWER2;
 	}
 	else if(powerType == POWER_TYPE_ENERGY) // Energy
 	{
-		powerField = UNIT_FIELD_POWER;
-		maxField = UNIT_FIELD_MAXPOWER;
+		powerField = UNIT_FIELD_POWER4;
+		maxField = UNIT_FIELD_MAXPOWER4;
 	}
 	else // Capt: if we can not use identify the type: do nothing
 		return; */
@@ -4911,7 +4911,7 @@ void Aura::SpellAuraFeignDeath(bool apply)
 
 			p_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
 			p_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH);
-			p_target->SetFlag(OBJECT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
+			p_target->SetFlag(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
 
 			//now get rid of mobs agro. pTarget->CombatStatus.AttackersForgetHate() - this works only for already attacking mobs
 			for(std::set<Object*>::iterator itr = p_target->GetInRangeSetBegin(); itr != p_target->GetInRangeSetEnd(); itr++)
@@ -4968,7 +4968,7 @@ void Aura::SpellAuraFeignDeath(bool apply)
 		{
 			p_target->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
 			p_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH);
-			p_target->RemoveFlag(OBJECT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
+			p_target->RemoveFlag(UNIT_DYNAMIC_FLAGS, U_DYN_FLAG_DEAD);
 			data.SetOpcode(SMSG_STOP_MIRROR_TIMER);
 			data << uint32(TIMER_FEIGNDEATH);
 			p_target->GetSession()->SendPacket(&data);
@@ -5512,9 +5512,9 @@ void Aura::EventPeriodicTrigger(uint32 amount, uint32 type)
 
 void Aura::EventPeriodicEnergizeVariable(uint32 amount, uint32 type)
 {
-	uint32 POWER_TYPE = UNIT_FIELD_POWER + type;
+	uint32 POWER_TYPE = UNIT_FIELD_POWER1 + type;
 
-	ARCEMU_ASSERT(POWER_TYPE <= UNIT_FIELD_POWER);
+	ARCEMU_ASSERT(POWER_TYPE <= UNIT_FIELD_POWER5);
 
 	Unit* ucaster = GetUnitCaster();
 	if(ucaster != NULL)
@@ -6573,7 +6573,7 @@ void Aura::SpellAuraModIncreaseEnergyPerc(bool apply)
 
 	if(apply)
 	{
-		mod->fixed_amount[mod->i] = m_target->GetModPUInt32Value(UNIT_FIELD_MAXPOWER + mod->m_miscValue, mod->m_amount);
+		mod->fixed_amount[mod->i] = m_target->GetModPUInt32Value(UNIT_FIELD_MAXPOWER1 + mod->m_miscValue, mod->m_amount);
 		m_target->ModMaxPower(mod->m_miscValue, mod->fixed_amount[mod->i]);
 		if(p_target != NULL && mod->m_miscValue == POWER_TYPE_MANA)
 			p_target->SetManaFromSpell(p_target->GetManaFromSpell() + mod->fixed_amount[mod->i]);
@@ -7573,11 +7573,11 @@ void Aura::SpellAuraEmphaty(bool apply)
 		return;
 
 	// Show extra info about beast
-	uint32 dynflags = m_target->GetUInt32Value(OBJECT_DYNAMIC_FLAGS);
+	uint32 dynflags = m_target->GetUInt32Value(UNIT_DYNAMIC_FLAGS);
 	if(apply)
 		dynflags |= U_DYN_FLAG_PLAYER_INFO;
 
-	m_target->BuildFieldUpdatePacket(caster, OBJECT_DYNAMIC_FLAGS, dynflags);
+	m_target->BuildFieldUpdatePacket(caster, UNIT_DYNAMIC_FLAGS, dynflags);
 }
 
 void Aura::SpellAuraModOffhandDamagePCT(bool apply)
